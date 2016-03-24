@@ -114,6 +114,18 @@ BEGIN
        put('@&&tunas360_skip_awr.sql/tunas360_9a_pre_one.sql'); 
        put('DEF skip_html=''''');
 
+       -- PlanX
+       put('SET TERM ON');
+       put('PRO Running PlanX, might take a bit');
+       put('SET TERM OFF');
+       put('@sql/planx.sql &&tunas360_diag_license. '||i.sql_id);
+       put('HOS zip -m &&tunas360_main_filename._&&tunas360_file_time. planx_'||i.sql_id||'_'||CHR(38)||chr(38)||'current_time..txt');
+       put('SPO &&tunas360_main_report..html APP;');
+       put('PRO <li>PlanX');
+       put('PRO <a href="planx_'||i.sql_id||'_'||CHR(38)||chr(38)||'current_time..txt">text</a>');
+       put('PRO </li>');
+       put('SPO OFF');  
+
        put('SPO &&tunas360_main_report..html APP;');
        put('PRO <br>');
        put('SPO OFF');   

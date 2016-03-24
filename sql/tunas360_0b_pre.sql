@@ -9,8 +9,8 @@ CL COL;
 COL row_num FOR 9999999 HEA '#' PRI;
 
 -- version
-DEF tunas360_vYYNN = 'v1601';
-DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-03-12)';
+DEF tunas360_vYYNN = 'v1602';
+DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-03-24)';
 DEF tunas360_prefix = 'tunas360';
 
 -- get dbid
@@ -115,7 +115,7 @@ SELECT TRIM(TO_NUMBER(value)) database_block_size FROM v$system_parameter2 WHERE
 
 -- the minimum time is hardcoded for now, should become a config param
 COL minimum_snap_id NEW_V minimum_snap_id;
-SELECT NVL(TO_CHAR(MIN(snap_id)), '0') minimum_snap_id FROM dba_hist_snapshot WHERE dbid = &&tunas360_dbid. AND '&&tunas360_diag_license.' = 'Y' AND begin_interval_time > SYSDATE - 7;  
+SELECT NVL(TO_CHAR(MIN(snap_id)), '0') minimum_snap_id FROM dba_hist_snapshot WHERE dbid = &&tunas360_dbid. AND '&&tunas360_diag_license.' = 'Y' AND begin_interval_time > SYSDATE - '&&tunas360_baseline_history.';  
 SELECT '-1' minimum_snap_id FROM DUAL WHERE TRIM('&&minimum_snap_id.') IS NULL;
 COL maximum_snap_id NEW_V maximum_snap_id;
 SELECT NVL(TO_CHAR(MAX(snap_id)), '&&minimum_snap_id.') maximum_snap_id FROM dba_hist_snapshot WHERE dbid = &&tunas360_dbid. AND '&&tunas360_diag_license.' = 'Y';
@@ -155,12 +155,12 @@ DEF main_table = '';
 DEF title = '';
 DEF title_no_spaces = '';
 DEF title_suffix = '';
-DEF common_tunas360_prefix = '&&tunas360_prefix._&&database_name_short.';
+DEF common_tunas360_prefix = '&&tunas360_prefix._&&tunas360_dbmod.';
 DEF tunas360_main_report = '00001_&&common_tunas360_prefix._index';
 DEF tunas360_log = '00002_&&common_tunas360_prefix._log';
 
 DEF tunas360_tkprof = '00003_&&common_tunas360_prefix._tkprof';
-DEF tunas360_main_filename = '&&common_tunas360_prefix._&&host_name_short.';
+DEF tunas360_main_filename = '&&common_tunas360_prefix._&&host_hash.';
 DEF tunas360_log2 = '00004_&&common_tunas360_prefix._log2';
 DEF tunas360_tracefile_identifier = '&&common_tunas360_prefix.';
 DEF tunas360_copyright = ' (c) 2015';
@@ -205,7 +205,7 @@ DEF bubblesDetails = '';
 DEF sql_text = '';
 DEF chartype = '';
 DEF stacked = '';
-DEF haxis = '&&db_version. dbname:&&database_name_short. host:&&host_name_short. (avg cpu_count: &&avg_cpu_count.)';
+DEF haxis = '&&db_version. dbname:&&tunas360_dbmod. host:&&host_hash. (avg cpu_count: &&avg_cpu_count.)';
 DEF vaxis = '';
 DEF vbaseline = '';
 DEF tit_01 = '';
@@ -360,7 +360,7 @@ BEGIN
 END;
 / 
 SET SERVEROUTPUT OFF
-PRO dbname:&&database_name_short. version:&&db_version. host:&&host_name_short. today:&&tunas360_time_stamp.
+PRO dbname:&&tunas360_dbmod. version:&&db_version. host:&&host_hash. today:&&tunas360_time_stamp.
 PRO </pre>
 PRO
 SPO OFF;

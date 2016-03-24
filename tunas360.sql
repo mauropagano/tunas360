@@ -1,6 +1,6 @@
 /*****************************************************************************************
    
-    TUNAs360 - Oracle Active Session(s) 360-degree View
+    TUNAs360 - (TUN)ing with (A)ctive (s)essions
     ASH-like session diagnostic without dependencies on Oracle Diagnostic Pack
     Copyright (C) 2016  Mauro Pagano
 

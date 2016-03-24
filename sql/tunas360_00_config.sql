@@ -22,6 +22,9 @@ DEF tunas360_num_top_sess = '5';
 -- number of top SQL to capture plan for 
 DEF tunas360_num_top_sqls_plan = '5';
 
+-- How many days to use to determine baseline, need Diag Pack license 
+DEF tunas360_baseline_history = '7';
+
 /**************************** not recommended to modify *********************************/
 
 -- excluding report types reduce usability while providing marginal performance gain

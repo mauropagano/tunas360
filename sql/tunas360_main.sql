@@ -79,6 +79,8 @@ PRO </td><td>
 @@tunas360_5a_top_objects.sql
 @@tunas360_5b_top_locks.sql
 @@tunas360_5c_temp.sql
+@@tunas360_5d_top_sess_by.sql
+@@tunas360_5e_time_model.sql
 
 PRO
 SPO OFF;

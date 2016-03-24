@@ -9,7 +9,7 @@ SPO OFF;
 DEF main_table = 'GV$SESSION';
 BEGIN
   :sql_text_backup := '
-SELECT data.obj#||'''' / ''''||o.owner||''''.''''||o.object_name,
+SELECT data.obj#||'' / ''||o.owner||''.''||o.object_name,
        samples,
        TRUNC(100*RATIO_TO_REPORT(samples) OVER (),2) percent,
        NULL dummy_01

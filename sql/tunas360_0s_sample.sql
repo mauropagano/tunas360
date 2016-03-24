@@ -53,6 +53,14 @@ BEGIN
       AND sstat.statistic# = sname.statistic#;
       --AND sstat.value <> 0;  -- capture all stats  
 
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_TIMEMODEL_START'
+                           position,       -- inst_id
+                           object_node,    -- stat_name
+                           partition_id    -- value
+                           )
+   SELECT 'TUNAS360_TIMEMODEL_START', inst_id, stat_name, value
+     FROM gv$sys_time_model;
+
    IF '&&tunas360_diag_license.' = 'Y' THEN
 
       INSERT INTO plan_table (statement_id,                                 -- 'TUNAS360_DATA'
@@ -210,6 +218,14 @@ BEGIN
       AND ses.sid = sstat.sid
       AND sstat.statistic# = sname.statistic#;
       --AND sstat.value <> 0;  -- capture all stats  
+
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_TIMEMODEL_START'
+                           position,       -- inst_id
+                           object_node,    -- stat_name
+                           partition_id    -- value
+                           )
+   SELECT 'TUNAS360_TIMEMODEL_STOP', inst_id, stat_name, value
+     FROM gv$sys_time_model;
   
 END;
 /
