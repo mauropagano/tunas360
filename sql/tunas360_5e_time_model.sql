@@ -11,7 +11,7 @@ DEF title = 'Difference in Time Model statistics';
 DEF main_table = 'GV$SYS_TIME_MODEL';
 BEGIN
   :sql_text := '
-   SELECT tm_stop.inst_id, tm_stop.statname name, NVL(tm_start.statvalue,0) start_value, tm_stop.statvalue stop_value, tm_stop.statvalue - NVL(tm_start.statvalue,0) diff
+   SELECT tm_stop.inst_id, tm_stop.statname name, NVL(tm_start.statvalue,0) begin_value, tm_stop.statvalue end_value, tm_stop.statvalue - NVL(tm_start.statvalue,0) diff
      FROM (SELECT position inst_id, object_node statname, partition_id statvalue
              FROM plan_table
             WHERE statement_id = ''TUNAS360_TIMEMODEL_START'') tm_start, 

@@ -145,10 +145,12 @@ BEGIN
        IF sstats_start_stop = 2 THEN -- it means the same session was always connected between start and end time
 
          put('DEF title=''Session Statistics for Instance:SID:Serial# '||i.inst_id||':'||i.sid||':'||i.serial#||'''');
+         put('DEF foot =''Samples collected between &&min_sample_time. and &&min_sample_time. (format mask YYYYMMDDHH24MISS).''');
          put('DEF main_table = ''GV$SESSTAT''');
          put('BEGIN');
          put(' :sql_text := ''');
-         put('SELECT sstats_stop.statname name, NVL(sstats_start.statvalue,0) begin_value, sstats_stop.statvalue end_value, sstats_stop.statvalue - NVL(sstats_start.statvalue,0) diff');
+         put('SELECT sstats_stop.statname name, NVL(sstats_start.statvalue,0) begin_value, sstats_stop.statvalue end_value, sstats_stop.statvalue - NVL(sstats_start.statvalue,0) diff, ');
+         put('       TRUNC((sstats_stop.statvalue - NVL(sstats_start.statvalue,0))/((TO_DATE(''''&&max_sample_time.'''',''''YYYYMMDDHH24MISS'''') - TO_DATE(''''&&min_sample_time.'''',''''YYYYMMDDHH24MISS''''))*66400),3) diff_per_sec ');
          put('  FROM (SELECT object_node statname, partition_id statvalue');
          put('          FROM plan_table');
          put('         WHERE position =  '||i.inst_id||'');

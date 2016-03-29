@@ -21,6 +21,7 @@ DEF column_number = '1';
 
 @@tunas360_1a_configuration.sql
 @@&&tunas360_skip_awr.tunas360_1b_baseline.sql
+@@tunas360_1c_system_load.sql
 
 PRO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -81,6 +82,7 @@ PRO </td><td>
 @@tunas360_5c_temp.sql
 @@tunas360_5d_top_sess_by.sql
 @@tunas360_5e_time_model.sql
+@@tunas360_5f_top_segments.sql
 
 PRO
 SPO OFF;

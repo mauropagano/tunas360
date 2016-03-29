@@ -9,8 +9,8 @@ CL COL;
 COL row_num FOR 9999999 HEA '#' PRI;
 
 -- version
-DEF tunas360_vYYNN = 'v1602';
-DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-03-24)';
+DEF tunas360_vYYNN = 'v1603';
+DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-03-28)';
 DEF tunas360_prefix = 'tunas360';
 
 -- get dbid
@@ -104,6 +104,10 @@ SELECT value||DECODE(INSTR(value, '/'), 0, '\', '/') tunas360_udump_path FROM v$
 -- get diag_trace path
 COL tunas360_diagtrace_path NEW_V tunas360_diagtrace_path FOR A500;
 SELECT value||DECODE(INSTR(value, '/'), 0, '\', '/') tunas360_diagtrace_path FROM v$diag_info WHERE name = 'Diag Trace';
+
+-- get sid
+COL tunas360_sid NEW_V tunas360_sid
+SELECT USERENV('SID') tunas360_sid FROM dual;
 
 -- get pid
 COL tunas360_spid NEW_V tunas360_spid FOR A5;

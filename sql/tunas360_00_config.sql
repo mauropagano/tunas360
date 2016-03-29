@@ -7,23 +7,8 @@
 -- rely on Oracle Diagnostic Pack, disabled by default
 DEF tunas360_diag_license = 'N';
 
--- max number of rows to collect
-DEF tunas360_max_rows = '1000000';
-
 -- max time to run for (in minutes)
-DEF tunas360_max_time = '5';
-
--- sleep time between samples (in seconds)
-DEF tunas360_sleep_time = '0.1';
-
--- number of top sessions to focus on
-DEF tunas360_num_top_sess = '5';
-
--- number of top SQL to capture plan for 
-DEF tunas360_num_top_sqls_plan = '5';
-
--- How many days to use to determine baseline, need Diag Pack license 
-DEF tunas360_baseline_history = '7';
+DEF tunas360_max_time = '10';
 
 /**************************** not recommended to modify *********************************/
 
@@ -43,6 +28,24 @@ DEF tunas360_conf_incl_sqlmon = 'Y';
 
 -- include/exclude BACKGROUND processes (excluded by default)
 DEF tunas360_conf_incl_background = 'N';
+
+-- max number of rows to collect
+DEF tunas360_max_rows = '1000000';
+
+-- sleep time between samples (in seconds)
+DEF tunas360_sleep_time = '0.1';
+
+-- number of top sessions to focus on
+DEF tunas360_num_top_sess = '5';
+
+-- number of top SQL to capture plan for 
+DEF tunas360_num_top_sqls_plan = '5';
+
+-- How many days to use to determine baseline, need Diag Pack license 
+DEF tunas360_baseline_history = '7';
+
+-- number of segments to report stats for 
+DEF tunas360_num_top_segments = '50';
 
 /**************************** not recommended to modify *********************************/
 

@@ -71,7 +71,7 @@ BEGIN
                     FROM plan_table
                    GROUP BY object_type, object_name, object_owner, cpu_cost)
            GROUP BY username, module, program
-           ORDER BY dist_serial_per_sid DESC)
+           ORDER BY num_dist_sessions DESC)
    WHERE ROWNUM <= &&tunas360_num_top_sess.
 ';
 END;

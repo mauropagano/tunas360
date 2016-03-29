@@ -39,6 +39,16 @@ BEGIN
 
    INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SESSTAT_START'
                            position,       -- inst_id
+                           object_node,    -- v$statname.name
+                           partition_id    -- gv$sesstat.value
+                           )
+   SELECT 'TUNAS360_SYSSTAT_START', sstat.inst_id, sname.name, sstat.value
+     FROM gv$sysstat sstat,
+          v$statname sname
+    WHERE sstat.statistic# = sname.statistic#;   
+
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SESSTAT_START'
+                           position,       -- inst_id
                            cpu_cost,       -- sid
                            io_cost,        -- serial#
                            object_node,    -- v$statname.name
@@ -60,6 +70,17 @@ BEGIN
                            )
    SELECT 'TUNAS360_TIMEMODEL_START', inst_id, stat_name, value
      FROM gv$sys_time_model;
+
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SEGSTAT_START'
+                           position,       -- inst_id
+                           cpu_cost,       -- ts#
+                           io_cost,        -- obj#
+                           parent_id,      -- dataobj#
+                           object_node,    -- statistic_name
+                           partition_id    -- value
+                           )
+   SELECT 'TUNAS360_SEGSTAT_START', inst_id, ts#, obj#, dataobj#, statistic_name, value
+     FROM gv$segstat sstat;      
 
    IF '&&tunas360_diag_license.' = 'Y' THEN
 
@@ -202,6 +223,16 @@ BEGIN
      END LOOP;
 
    END IF;  
+
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SESSTAT_START'
+                           position,       -- inst_id
+                           object_node,    -- v$statname.name
+                           partition_id    -- gv$sesstat.value
+                           )
+   SELECT 'TUNAS360_SYSSTAT_STOP', sstat.inst_id, sname.name, sstat.value
+     FROM gv$sysstat sstat,
+          v$statname sname
+    WHERE sstat.statistic# = sname.statistic#; 
            
    INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SESSTAT_START'
                            position,       -- inst_id
@@ -226,13 +257,28 @@ BEGIN
                            )
    SELECT 'TUNAS360_TIMEMODEL_STOP', inst_id, stat_name, value
      FROM gv$sys_time_model;
+
+   INSERT INTO plan_table (statement_id,   -- 'TUNAS360_SEGSTAT_START'
+                           position,       -- inst_id
+                           cpu_cost,       -- ts#
+                           io_cost,        -- obj#
+                           parent_id,      -- dataobj#
+                           object_node,    -- statistic_name
+                           partition_id    -- value
+                           )
+   SELECT 'TUNAS360_SEGSTAT_STOP', inst_id, ts#, obj#, dataobj#, statistic_name, value
+     FROM gv$segstat sstat; 
   
 END;
 /
 
 SELECT COUNT(*)||' rows extracted.' FROM plan_table WHERE statement_id LIKE 'TUNAS360%';  
 SELECT TO_CHAR(SYSDATE, 'YYYY-MM-DD/HH24:MI:SS') tunas360_time_stamp FROM DUAL;
-SELECT TO_CHAR(SYSDATE, 'HH24:MI:SS') hh_mm_ss FROM DUAL;  
+SELECT TO_CHAR(SYSDATE, 'HH24:MI:SS') hh_mm_ss FROM DUAL; 
+
+COL min_sample_time NEW_V min_sample_time
+COL max_sample_time NEW_V max_sample_time
+SELECT TO_CHAR(MIN(timestamp),'YYYYMMDDHH24MISS') min_sample_time, TO_CHAR(MAX(timestamp),'YYYYMMDDHH24MISS') max_sample_time FROM plan_table WHERE statement_id = 'TUNAS360_DATA'; 
 
 PRO Done sampling V$SESSION data
 PRO
