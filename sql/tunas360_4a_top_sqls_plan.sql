@@ -27,6 +27,7 @@ BEGIN
   put('DEF skip_text_bck = ''@@tunas360_skip_text.'';');
   put('DEF tunas360_skip_text=''''');
   put('SET DEF &');
+  put('COL executions FOR 999999999999999');
 
   FOR i IN (SELECT * 
               FROM (SELECT COUNT(*) num_samples, remarks sql_id
@@ -41,6 +42,26 @@ BEGIN
        put('SPO &&tunas360_main_report..html APP;');
        put('PRO <h4>SQL_ID: '||i.sql_id||' NumSamples:'||i.num_samples||'</h4>');
        put('SPO OFF');
+
+
+       put('DEF title=''SQL Text for SQL_ID '||i.sql_id||'''');
+       put('DEF main_table = ''GV$SQL''');
+       put('DEF skip_html=''Y''');
+       put('BEGIN');
+       put(' :sql_text := ''');
+       put('SELECT sql_fulltext ');
+       put('  FROM gv$sql' );
+       put(' WHERE sql_id = '''''||i.sql_id||''''' ');
+       put('  AND sql_fulltext IS NOT NULL');
+       put('  AND ROWNUM = 1 ');
+       put(''';');
+       put('END;');
+       put('/ ');
+       put('COL inst_child NOPRI');
+       put('@sql/tunas360_9a_pre_one.sql');   
+       put('DEF skip_html='''''); 
+       put('COL inst_child PRI');
+
 
        put('COL optimizer_env NOPRI');
        put('DEF title=''Cursor statistics for SQL_ID '||i.sql_id||'''');
@@ -74,7 +95,94 @@ BEGIN
        put('/ ');
        put('@sql/tunas360_9a_pre_one.sql');   
        put('COL address PRI');
-       put('COL child_address PRI');   
+       put('COL child_address PRI');  
+
+
+       put('DEF title=''Top 15 Waits events for SQL_ID '||i.sql_id||'''');
+       put('DEF main_table = ''GV$SESSION''');
+       put('DEF skip_text=''Y''');
+       put('DEF skip_pch=''''');
+       put('DEF slices = ''15''');
+       put('BEGIN');
+       put(' :sql_text := ''');
+       put('SELECT event,');
+       put('       num_samples,');
+       put('       TRUNC(100*RATIO_TO_REPORT(num_samples) OVER (),2) percent,');
+       put('       NULL dummy_01');
+       put('  FROM (SELECT object_node event,');
+       put('               count(*) num_samples');
+       put('          FROM plan_table');
+       put('         WHERE statement_id = ''''TUNAS360_DATA'''' ');
+       put('           AND remarks =  '''''||i.sql_id||'''''');
+       put('         GROUP BY object_node'); 
+       put('         ORDER BY 2 DESC)');
+       put(' WHERE rownum <= 15');
+       put(' ORDER BY 2 DESC');
+       put(''';');
+       put('END;');
+       put('/ ');
+       put('@sql/tunas360_9a_pre_one.sql'); 
+
+       put('DEF title=''Top 15 Objects for SQL_ID '||i.sql_id||'''');
+       put('DEF main_table = ''GV$SESSION''');
+       put('DEF skip_text=''Y''');
+       put('DEF skip_pch=''''');
+       put('DEF slices = ''15''');
+       put('BEGIN');
+       put(' :sql_text := ''');
+       put('SELECT data.obj#||');
+       put('       CASE WHEN data.obj# = 0 THEN '''' UNDO ''''  ');
+       put('            ELSE (SELECT TRIM(''''.'''' FROM '''' ''''||o.owner||''''.''''||o.object_name||''''.''''||o.subobject_name) FROM dba_objects o WHERE o.object_id = data.obj# AND ROWNUM = 1)'); 
+       put('       END data_object,');
+       put('       num_samples,');
+       put('       TRUNC(100*RATIO_TO_REPORT(num_samples) OVER (),2) percent,');
+       put('       NULL dummy_01');
+       put('  FROM (SELECT a.object_instance obj#,');
+       put('               count(*) num_samples');
+       put('          FROM plan_table a');
+       put('         WHERE statement_id = ''''TUNAS360_DATA'''' ');
+       put('           AND remarks =  '''''||i.sql_id||'''''');
+       put('           AND a.other_tag IN (''''Application'''',''''Cluster'''', ''''Concurrency'''', ''''User I/O'''', ''''System I/O'''')');
+       put('         GROUP BY a.object_instance'); 
+       put('         ORDER BY 2 DESC) data');       
+       put(' WHERE rownum <= 15');
+       put(' ORDER BY 2 DESC');
+       put(''';');
+       put('END;');
+       put('/ ');
+       put('@sql/tunas360_9a_pre_one.sql');
+
+
+       put('DEF title=''Top 15 Event/Object for SQL_ID '||i.sql_id||'''');
+       put('DEF main_table = ''GV$SESSION''');
+       put('DEF skip_text=''Y''');
+       put('DEF skip_pch=''''');
+       put('DEF slices = ''15''');
+       put('BEGIN');
+       put(' :sql_text := ''');
+       put('SELECT data.event||'''' / ''''||data.obj#||');
+       put('       CASE WHEN data.obj# = 0 THEN ''''UNDO''''  ');
+       put('            ELSE (SELECT TRIM(''''.'''' FROM '''' ''''||o.owner||''''.''''||o.object_name||''''.''''||o.subobject_name) FROM dba_objects o WHERE o.object_id = data.obj# AND ROWNUM = 1)'); 
+       put('       END data_object,');
+       put('       num_samples,');
+       put('       TRUNC(100*RATIO_TO_REPORT(num_samples) OVER (),2) percent,');
+       put('       NULL dummy_01');
+       put('  FROM (SELECT a.object_node event, ');
+       put('               a.object_instance obj#,');
+       put('               count(*) num_samples');
+       put('          FROM plan_table a');
+       put('         WHERE statement_id = ''''TUNAS360_DATA'''' ');
+       put('           AND remarks =  '''''||i.sql_id||'''''');
+       put('           AND a.other_tag IN (''''Application'''',''''Cluster'''', ''''Concurrency'''', ''''User I/O'''', ''''System I/O'''')');
+       put('         GROUP BY a.object_instance, a.object_node'); 
+       put('         ORDER BY 2 DESC) data');       
+       put(' WHERE rownum <= 15');
+       put(' ORDER BY 2 DESC');
+       put(''';');
+       put('END;');
+       put('/ ');
+       put('@sql/tunas360_9a_pre_one.sql');
+
 
        put('DEF title=''Execution plan(s) for SQL_ID '||i.sql_id||'''');
        put('DEF main_table = ''GV$SQL_PLAN_STATISTICS_ALL''');

@@ -9,7 +9,10 @@ SPO OFF;
 DEF main_table = 'GV$SESSION';
 BEGIN
   :sql_text_backup := '
-SELECT data.obj#||'' / ''||o.owner||''.''||o.object_name,
+SELECT data.obj#||
+       CASE WHEN data.obj# = 0 THEN '' UNDO '' 
+            ELSE (SELECT TRIM(''.'' FROM '' ''||o.owner||''.''||o.object_name||''.''||o.subobject_name) FROM dba_objects o WHERE o.object_id = data.obj# AND ROWNUM = 1) 
+       END data_object,
        samples,
        TRUNC(100*RATIO_TO_REPORT(samples) OVER (),2) percent,
        NULL dummy_01
@@ -19,9 +22,7 @@ SELECT data.obj#||'' / ''||o.owner||''.''||o.object_name,
                  FROM plan_table
                 WHERE statement_id = ''TUNAS360_DATA'')
         WHERE @filter_predicate@
-        GROUP BY obj#) data,
-       dba_objects o
- WHERE data.obj# = o.data_object_id(+)
+        GROUP BY obj#) data 
  ORDER BY 2 DESC NULLS LAST
 ';
 END;

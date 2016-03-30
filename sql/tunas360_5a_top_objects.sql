@@ -148,6 +148,33 @@ END;
 @@tunas360_9a_pre_one.sql
 
 
+DEF title = 'Partition Key Columns';
+DEF main_table = 'DBA_PART_KEY_COLUMNS';
+BEGIN
+  :sql_text := '
+SELECT *
+  FROM dba_part_key_columns
+ WHERE (owner, name) in &&tables_list.
+ ORDER BY owner, name, column_position
+';
+END;
+/
+@@tunas360_9a_pre_one.sql
+
+DEF title = 'Table Partitions';
+DEF main_table = 'DBA_TAB_PARTITIONS';
+BEGIN
+  :sql_text := '
+SELECT *
+  FROM dba_tab_partitions
+ WHERE (table_owner, table_name) in &&tables_list.
+ ORDER BY table_owner, table_name, partition_position
+';
+END;
+/
+@@tunas360_9a_pre_one.sql
+
+
 SPO &&tunas360_main_report..html APP;
 PRO </ol>
 SPO OFF;

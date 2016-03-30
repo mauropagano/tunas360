@@ -39,15 +39,15 @@ COL ROW_NUM PRI
 -- footer
 PRO &&foot.
 SET LIN 80;
-DESC &&main_table.
+--DESC &&main_table.
 SET HEA OFF;
 SET LIN 32767;
-PRINT sql_text_display;
+--PRINT sql_text_display;
 SET HEA ON;
-PRO &&row_num. rows selected.
+--PRO &&row_num. rows selected.
 
 PRO 
-PRO &&tunas360_prefix.&&tunas360_copyright. Version &&tunas360_vrsn.. Report executed on &&tunas360_time_stamp. for database &&db_version. dbmod &&tunas360_dbmod. from host &&host_hash..
+--PRO &&tunas360_prefix.&&tunas360_copyright. Version &&tunas360_vrsn.. Report executed on &&tunas360_time_stamp. for database &&db_version. dbmod &&tunas360_dbmod. from host &&host_hash..
 SPO OFF;
 
 -- get time t1

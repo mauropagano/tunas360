@@ -134,6 +134,36 @@ BEGIN
        put('/ ');
        put('@sql/tunas360_9a_pre_one.sql');   
 
+       put('DEF title=''Top 15 Objects for Instance:SID:Serial# '||i.inst_id||':'||i.sid||':'||i.serial#||'''');
+       put('DEF main_table = ''GV$SESSION''');
+       put('DEF skip_pch=''''');
+       put('DEF slices = ''15''');
+       put('BEGIN');
+       put(' :sql_text := ''');
+       put('SELECT data.obj#||');
+       put('       CASE WHEN data.obj# = 0 THEN ''''UNDO''''  ');
+       put('            ELSE (SELECT TRIM(''''.'''' FROM '''' ''''||o.owner||''''.''''||o.object_name||''''.''''||o.subobject_name) FROM dba_objects o WHERE o.object_id = data.obj# AND ROWNUM = 1)'); 
+       put('       END data_object,');
+       put('       num_samples,');
+       put('       TRUNC(100*RATIO_TO_REPORT(num_samples) OVER (),2) percent,');
+       put('       NULL dummy_01');
+       put('  FROM (SELECT a.object_instance obj#,');
+       put('               count(*) num_samples');
+       put('          FROM plan_table a');
+       put('         WHERE statement_id = ''''TUNAS360_DATA'''' ');
+       put('           AND position =  '||i.inst_id||'');
+       put('           AND cpu_cost = '||i.sid||''); 
+       put('           AND io_cost = '||i.serial#||''); 
+       put('           AND a.other_tag IN (''''Application'''',''''Cluster'''', ''''Concurrency'''', ''''User I/O'''', ''''System I/O'''')');
+       put('         GROUP BY a.object_instance'); 
+       put('         ORDER BY 2 DESC) data');       
+       put(' WHERE rownum <= 15');
+       put(''';');
+       put('END;');
+       put('/ ');
+       put('@sql/tunas360_9a_pre_one.sql');
+
+
        SELECT COUNT(DISTINCT statement_id)
          INTO sstats_start_stop
          FROM plan_table
