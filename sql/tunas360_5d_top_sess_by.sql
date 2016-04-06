@@ -66,10 +66,10 @@ DEF main_table = 'GV$SESSION';
 BEGIN
   :sql_text := '
   SELECT *
-    FROM (SELECT username, module, program, COUNT(DISTINCT sid) num_distinct_sid, SUM(dist_serial_per_sid) num_dist_sessions
-            FROM (SELECT object_type username, object_name module, object_owner program, cpu_cost sid, COUNT(DISTINCT io_cost) dist_serial_per_sid
+    FROM (SELECT username, module, program, COUNT(DISTINCT inst_id||''.''||sid) num_distinct_sid, SUM(dist_serial_per_sid) num_dist_sessions
+            FROM (SELECT object_type username, object_name module, object_owner program, position inst_id, cpu_cost sid, COUNT(DISTINCT io_cost) dist_serial_per_sid
                     FROM plan_table
-                   GROUP BY object_type, object_name, object_owner, cpu_cost)
+                   GROUP BY object_type, object_name, object_owner, position, cpu_cost)
            GROUP BY username, module, program
            ORDER BY num_dist_sessions DESC)
    WHERE ROWNUM <= &&tunas360_num_top_sess.

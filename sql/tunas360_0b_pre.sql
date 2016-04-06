@@ -9,8 +9,8 @@ CL COL;
 COL row_num FOR 9999999 HEA '#' PRI;
 
 -- version
-DEF tunas360_vYYNN = 'v1604';
-DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-03-30)';
+DEF tunas360_vYYNN = 'v1605';
+DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-04-06)';
 DEF tunas360_prefix = 'tunas360';
 
 -- get dbid

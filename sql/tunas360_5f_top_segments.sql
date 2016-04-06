@@ -8,7 +8,7 @@ SPO OFF;
 
 
 DEF title = 'Logical reads';
-DEF main_table = 'GV$SESSTAT';
+DEF main_table = 'GV$SEGSTAT';
 BEGIN
   :sql_text := '
   WITH top_segments AS (SELECT obj#, ROWNUM fake_rank
@@ -99,7 +99,7 @@ END;
 
 
 DEF title = 'Physical reads';
-DEF main_table = 'GV$SESSTAT';
+DEF main_table = 'GV$SEGSTAT';
 BEGIN
   :sql_text := '
   WITH top_segments AS (SELECT obj#, ROWNUM fake_rank
@@ -190,7 +190,7 @@ END;
 
 
 DEF title = 'DB block changes';
-DEF main_table = 'GV$SESSTAT';
+DEF main_table = 'GV$SEGSTAT';
 BEGIN
   :sql_text := '
   WITH top_segments AS (SELECT obj#, ROWNUM fake_rank

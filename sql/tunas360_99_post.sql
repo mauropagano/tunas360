@@ -63,3 +63,12 @@ HOS zip -mq &&tunas360_main_filename._&&tunas360_file_time. 00000_readme_first.t
 HOS unzip -l &&tunas360_main_filename._&&tunas360_file_time.
 
 SET TERM ON;
+
+PRO
+PRO 
+PRO File &&tunas360_main_filename._&&tunas360_file_time. has been generated.
+PRO
+PRO
+
+
+exit
