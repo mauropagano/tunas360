@@ -95,6 +95,7 @@ BEGIN
                               object_type,                                  -- username
                               object_owner,                                 -- program  --> need a long column
                               object_name,                                  -- module
+                              object_alias,                                 -- service_name
                               cardinality,                                  -- wait_time
                               bytes,                                        -- seconds_in_wait
                               operation,                                    -- state
@@ -116,6 +117,7 @@ BEGIN
                user_id,   -- different from V$SESSION.USERNAME
                substr(program,1,30),
                substr(module,1,30),
+               sh.name, -- needs joining against v$active_services as ASH only has service_hash
                wait_time,
                NULL,
                &&skip_10g.session_state,  -- not equivalent to V$SESSION.STATE
@@ -130,8 +132,9 @@ BEGIN
                ','||&&skip_10g.&&skip_11r1.blocking_inst_id||
                ','||blocking_session||   -- need to add blocking_session_serial# for ASH, no need for V$SESSION
                ','||NULL||','||NULL||','||NULL 
-         FROM gv$active_session_history
-        WHERE sample_time >= systimestamp - ('&&tunas360_max_time.'/1440); 
+         FROM gv$active_session_history, (select distinct name, name_hash from gv$active_services) sh
+        WHERE sample_time >= systimestamp - ('&&tunas360_max_time.'/1440) AND
+              sh.name_hash = gv$active_session_history.service_hash; 
 
    ELSE  
 
@@ -149,6 +152,7 @@ BEGIN
                               object_type,                                  -- username
                               object_owner,                                 -- program
                               object_name,                                  -- module
+                              object_alias,                                 -- service_name
                               cardinality,                                  -- wait_time
                               bytes,                                        -- seconds_in_wait
                               operation,                                    -- state
@@ -179,6 +183,7 @@ BEGIN
               username, 
               substr(program,1,30),
               substr(module,1,30),
+              service_name,
               wait_time, 
               seconds_in_wait, 
               state,
