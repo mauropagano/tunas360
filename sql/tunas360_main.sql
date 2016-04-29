@@ -38,6 +38,7 @@ PRO </td><td>
 @@tunas360_2e_top_programs.sql
 @@tunas360_2f_top_modules.sql
 @@tunas360_2g_top_objects.sql
+@@tunas360_2h_top_services.sql
 
 PRO
 SPO OFF;
