@@ -13,7 +13,7 @@ PRO
 PRO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 PRO
 PRO &&hh_mm_ss.
-PRO Sampling V$SESSION data, will take up to &&tunas360_max_time minutes.
+PRO Sampling V$SESSION data at &&tunas360_sleep_time.s sampling interval, will take up to &&tunas360_max_time minutes.
 
 DECLARE
 
@@ -23,14 +23,14 @@ DECLARE
 
   -- used to determine when to stop the collection
   stop_time DATE;
-  max_rows_sampled NUMBER;
+  --max_rows_sampled NUMBER;
 
   -- used to distinguish samples since we don't have a TIMESTAMP column in PLAN_TABLE
   sample_id NUMBER;
 BEGIN
 
    rows_sampled := 0;
-   max_rows_sampled := &&tunas360_max_rows;
+   --max_rows_sampled := &&tunas360_max_rows;
    
    current_time := sysdate; 
    stop_time := sysdate+&&tunas360_max_time/1440;
@@ -132,13 +132,13 @@ BEGIN
                ','||&&skip_10g.&&skip_11r1.blocking_inst_id||
                ','||blocking_session||   -- need to add blocking_session_serial# for ASH, no need for V$SESSION
                ','||NULL||','||NULL||','||NULL 
-         FROM gv$active_session_history, (select distinct name, name_hash from gv$active_services) sh
-        WHERE sample_time >= systimestamp - ('&&tunas360_max_time.'/1440) AND
-              sh.name_hash = gv$active_session_history.service_hash; 
+         FROM gv$active_session_history, (SELECT DISTINCT name, name_hash FROM gv$active_services) sh
+        WHERE sample_time >= systimestamp - ('&&tunas360_max_time.'/1440) 
+          AND sh.name_hash = gv$active_session_history.service_hash; 
 
    ELSE  
 
-     WHILE (rows_sampled < max_rows_sampled AND current_time < stop_time) LOOP
+     WHILE (rows_sampled < &&tunas360_max_rows. AND current_time < stop_time) LOOP
          
        
       INSERT INTO plan_table (statement_id,                                 -- 'TUNAS360_DATA'
@@ -164,13 +164,8 @@ BEGIN
                               --&&skip_10g.id,                                 -- 
                               &&skip_10g.partition_id,                       -- sql_exec_id
                               &&skip_10g.distribution,                       -- sql_exec_start
-                              partition_start,                               -- seq#,p1text,p1,p2text,p2,p3text,p3,row_wait_file#,row_wait_block#, --row_wait_row#, --tm_delta_time, 
-                              --                                                     -- --tm_delta_cpu_time, --tm_delta_db_time
-                              partition_stop                                          -- --in_parse, --in_hard_parse, --in_sql_execution, qc_instance_id, qc_session_id, --qc_session_serial#, 
-                              --                                               -- blocking_session_status, blocking_instance, blocking_session, final_blocking_session_status, final_blocking_instance, final_blocking_session
-                              --                                                     -- --px_flags (11gR201 also), --pga_allocated (11gR1 also), --temp_space_allocated (11gR1 also)
-                              --                                                     -- --delta_time (11gR1 also), --delta_read_io_requests (11gR1 also), --delta_write_io_requests (11gR1 also), 
-                              --                                                     -- --delta_read_io_bytesi (11gR1 also), --delta_write_io_bytes (11gR1 also), --delta_interconnect_io_bytes (11gR1 also)     
+                              partition_start,                               -- seq#,p1text,p1,p2text,p2,p3text,p3,row_wait_file#,row_wait_block#, --row_wait_row#, 
+                              partition_stop                                 -- blocking_session_status, blocking_instance, blocking_session, final_blocking_session_status, final_blocking_instance, final_blocking_session   
                              )
        SELECT 'TUNAS360_DATA', 
               sample_id,
@@ -194,26 +189,7 @@ BEGIN
               seq#||','||p1text||','||p1||','||p2text||','||p2||','||p3text||','||p3||','||row_wait_file#||','||row_wait_block#||
               ','||&&skip_10g.row_wait_row#
               ,
-              --&&skip_10g.in_parse||
-              --','||
-              --&&skip_10g.in_hard_parse||
-              --','||
-              --&&skip_10g.in_sql_execution||
-              --','||qc_instance_id||','||qc_session_id||','||
-              --&&skip_10g.qc_session_serial#||
-              --','||
               blocking_session_status||','||blocking_instance||','||blocking_session||','||final_blocking_session_status||','||final_blocking_instance||','||final_blocking_session
-              --||','||
-              --&&skip_10g.&&skip_11r1.blocking_inst_id||
-              --','||&&skip_10g.&&skip_11r1.&&skip_11r201.px_flags||
-              --','||&&skip_10g.&&skip_11r1.pga_allocated||
-              --','||&&skip_10g.&&skip_11r1.temp_space_allocated||
-              --','||&&skip_10g.&&skip_11r1.delta_time||
-              --','||&&skip_10g.&&skip_11r1.delta_read_io_requests||
-              --','||&&skip_10g.&&skip_11r1.delta_write_io_requests||
-              --','||&&skip_10g.&&skip_11r1.delta_read_io_bytes||
-              --','||&&skip_10g.&&skip_11r1.delta_write_io_bytes||
-              --','&&skip_10g.&&skip_11r1.||delta_interconnect_io_bytes
          FROM gv$session
         WHERE status = 'ACTIVE'
           &&tunas360_skip_background.AND type <> 'BACKGROUND'

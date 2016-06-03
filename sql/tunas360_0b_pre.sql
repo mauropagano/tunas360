@@ -9,8 +9,8 @@ CL COL;
 COL row_num FOR 9999999 HEA '#' PRI;
 
 -- version
-DEF tunas360_vYYNN = 'v1605';
-DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-04-06)';
+DEF tunas360_vYYNN = 'v1606';
+DEF tunas360_vrsn = '&&tunas360_vYYNN. (2016-06-01)';
 DEF tunas360_prefix = 'tunas360';
 
 -- get dbid
@@ -124,6 +124,12 @@ SELECT '-1' minimum_snap_id FROM DUAL WHERE TRIM('&&minimum_snap_id.') IS NULL;
 COL maximum_snap_id NEW_V maximum_snap_id;
 SELECT NVL(TO_CHAR(MAX(snap_id)), '&&minimum_snap_id.') maximum_snap_id FROM dba_hist_snapshot WHERE dbid = &&tunas360_dbid. AND '&&tunas360_diag_license.' = 'Y';
 SELECT '-1' maximum_snap_id FROM DUAL WHERE TRIM('&&maximum_snap_id.') IS NULL;
+
+-- the algorithm assumes &&tunas360_sleep_num_sessions. active session per sample
+ -- the idea is to find a sleep time large enough to cover the whole &&tunas360_max_time. minutes 
+ -- collecting around &&tunas360_max_rows. rows (the *10 is to relax sampling a bit)
+COL tunas360_sleep_time NEW_V tunas360_sleep_time;
+SELECT LTRIM(TRUNC(((&&tunas360_max_time.*60*10)/(&&tunas360_max_rows./&&tunas360_sleep_num_sessions.)),4)) tunas360_sleep_time FROM dual;
 
 
 -- inclusion config determine skip flags

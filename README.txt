@@ -1,4 +1,4 @@
-TUNAs360 v1606 (2016-04-24) by Mauro Pagano
+TUNAs360 v1607 (2016-06-03) by Mauro Pagano
 
 TUNAs360 is a "free to use" tool to perform an initial assessment of an Oracle database. 
 It collects several information about the database workload. It also helps to document any findings.

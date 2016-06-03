@@ -33,7 +33,7 @@ DEF tunas360_conf_incl_background = 'N';
 DEF tunas360_max_rows = '1000000';
 
 -- sleep time between samples (in seconds)
-DEF tunas360_sleep_time = '0.1';
+--DEF tunas360_sleep_time = '0.1';
 
 -- number of top sessions to focus on
 DEF tunas360_num_top_sess = '5';
@@ -47,7 +47,13 @@ DEF tunas360_baseline_history = '7';
 -- number of segments to report stats for 
 DEF tunas360_num_top_segments = '50';
 
+-- number of top waits to compute histograms on
+DEF tunas360_num_top_waits = '10';
+
 /**************************** not recommended to modify *********************************/
+
+-- number of active sessions in average, used to determine sleep time (DO NOT CHANGE, talk to me first) 
+DEF tunas360_sleep_num_sessions = '100';
 
 DEF tunas360_conf_eDB360_page = '<a href="http://www.enkitec.com/products/edb360" target="_blank">';
 DEF tunas360_conf_SQLd360_page = '<a href="http://www.enkitec.com/products/sqld360" target="_blank">';
